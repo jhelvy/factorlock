@@ -129,7 +129,7 @@ mpg |>
 # Author, Version, and License Information
 
 - Author: *John Paul Helveston* <https://www.jhelvy.com/>
-- Date First Written: *October 23, 2020*
+- Date First Written: *May 10, 2023*
 - License:
   [MIT](https://github.com/jhelvy/factorlock/blob/master/LICENSE.md)
 

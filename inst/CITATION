@@ -4,8 +4,8 @@ citEntry(
   entry    = "Manual",
   title    = "factorlock: Set Factors Levels Based on Row Order",
   author   = "John Paul Helveston",
-  year     = "2022",
+  year     = "2023",
   note     = "R package",
   url      = "https://jhelvy.github.io/factorlock/",
-  textVersion = "John Paul Helveston (2022). factorlock: Set Factors Levels Based on Row Order."
+  textVersion = "John Paul Helveston (2023). factorlock: Set Factors Levels Based on Row Order."
 )
