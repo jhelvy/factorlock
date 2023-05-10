@@ -1,0 +1,140 @@
+---
+title: "Comparisons"
+subtitle: "EMSE 4575: Exploratory Data Analysis"
+date: February 24, 2021
+week: 7
+output: html_document
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# install.packages("ggrepel")
+# install.packages("ggridges")
+library(ggrepel)
+library(ggridges)
+library(tidyverse)
+library(here)
+library(cowplot)
+knitr::opts_chunk$set(
+    warning = FALSE,
+    message = FALSE,
+    fig.path = "figs/",
+    fig.width = 7.252,
+    fig.height = 4,
+    comment = "#>",
+    fig.retina = 3
+)
+
+# Read in the data
+gapminder        <- read_csv(here('data', 'gapminder.csv'))
+milk_production  <- read_csv(here('data', 'milk_production.csv'))
+internet_regions <- read_csv(here('data', 'internet_users_region.csv'))
+us_coffee_shops <- read_csv(here('data', 'us_coffee_shops.csv'))
+```
+
+
+```{r main-function, echo=FALSE, message=FALSE, warning=FALSE}
+lock_factors <- function(df, cols = NULL, rev = FALSE) {
+    df <- as.data.frame(df)
+    types <- unlist(lapply(df, class))
+    if (!is.null(cols)) {
+        fct_ids <- which(names(df) %in% cols)
+    } else {
+        fct_ids <- which(types %in% c("character", "factor"))
+    }
+    for (i in seq(length(fct_ids))) {
+      col <- df[,i]
+      factor_levels <- unique(col)
+      if (rev) { factor_levels <- rev(factor_levels) }
+      df[,i] <- factor(col, levels = factor_levels)
+    }
+    return(df)
+}
+```
+
+```{r us_coffee_shops, fig.width=7, fig.height=4}
+coffee_summary <- us_coffee_shops %>%
+  count(name) %>%
+  mutate(
+    name = fct_other(name, keep = c(
+      "Starbucks", "Dunkin' Donuts", "Baskin Robbins")))
+
+df <- coffee_summary %>% 
+  mutate(name = fct_reorder(name, desc(n)))
+levels(df$name) 
+
+df <- coffee_summary %>% 
+  arrange(-n) %>% 
+  lock_factors()
+levels(df$name) 
+
+df %>% 
+  ggplot() +
+  geom_col(
+    aes(x = name, y = n),
+    fill = "brown", width = 0.7) +
+  theme_minimal() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(
+    x = "Coffee Shop",
+    y = "Count",
+    title = 'Number of coffee shops in North America')
+```
+
+```{r milk-lollipop-mean, fig.height=8, fig.width=5.5, fig.align='center'}
+milk_summary <- milk_production %>%
+  filter(year == 2017) %>%
+  mutate(milk_produced = milk_produced / 10^9)
+
+df <- milk_summary %>% 
+    mutate(state = fct_reorder(state, milk_produced))
+head(levels(df$state))
+     
+df <- milk_summary %>% 
+    arrange(milk_produced) %>% 
+    lock_factors()
+head(levels(df$state))
+
+df %>% 
+  ggplot() +
+  geom_point(
+    aes(x = milk_produced, y = state),
+    size = 2.5, color = 'steelblue') +
+  theme_minimal() +
+  labs(x = 'Milk produced (billions lbs)',
+       y = 'State')
+```
+
+```{r internet-usage-dumbbell-lock, fig.height=4, fig.width=6, fig.align='center'}
+internet_regions_compare <- internet_regions %>%
+  filter(year %in% c(2000, 2015)) %>%
+  mutate(
+    numUsers = numUsers / 10^6,
+    year = as.factor(year))
+
+df <- internet_regions_compare %>%
+  mutate(region = fct_reorder2(region, year, -numUsers)) 
+levels(df$region)
+
+df <- internet_regions_compare %>%
+  arrange(desc(numUsers), year) %>%
+  lock_factors(rev = TRUE) 
+levels(df$region)
+
+df %>% 
+  ggplot(aes(x = numUsers, y = region)) +
+  geom_line(
+    aes(group = region),
+    color = 'lightblue', size = 1) +
+    geom_point(aes(color = year), size = 2.5) +
+    scale_color_manual(values = c('lightblue', 'steelblue')) +
+    scale_x_continuous(limits = c(0, 1200)) +
+    theme_minimal_vgrid() +
+    # Remove y axis line
+    theme(axis.line.y = element_blank()) +
+    labs(x = 'Millions of internet users',
+         y = 'Region',
+         color = 'Year',
+         title = 'Number of internet users by world region',
+         subtitle = "(2000 - 2015)")
+```
+

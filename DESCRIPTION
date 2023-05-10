@@ -1,0 +1,24 @@
+Package: factorlock
+Title: Set Factors Levels Based on Row Order
+Version: 0.0.0.9000
+Authors@R: c(
+    person(given   = "John",
+           family  = "Helveston",
+           role    = c("aut", "cre", "cph"),
+           email   = "john.helveston@gmail.com",
+           comment = c(ORCID = "0000-0002-2657-9191")))
+Description: Sets the factor levels for some or all factors in a data frame based on their row order in the data frame.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+VignetteBuilder: knitr
+Depends:
+    R (>= 3.5.0)
+Suggests:
+    dplyr,
+    forecats,
+    gapminder
+URL: https://github.com/jhelvy/factorlock
+BugReports: https://github.com/jhelvy/factorlock/issues

@@ -1,0 +1,156 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse   = TRUE,
+  warning    = FALSE,
+  message    = FALSE,
+  comment    = "#>",
+  fig.path   = "man/figures/",
+  fig.retina = 3
+)
+```
+
+# factorlock <a href='https://jhelvy.github.io/factorlock/'><img src='man/figures/logo.png' align="right" style="height:139px;"/></a>
+
+<!-- badges: start -->
+[![CRAN
+status](https://www.r-pkg.org/badges/version/factorlock)](https://CRAN.R-project.org/package=factorlock)
+[![Travis build status](https://app.travis-ci.com/jhelvy/factorlock.svg?branch=master)](https://app.travis-ci.com/github/jhelvy/factorlock)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/factorlock?color=blue)](https://cran.r-project.org/package=factorlock)
+<!-- badges: end -->
+
+# Usage
+
+The only thing this package does is provide the `factorlock::lock_factors()` function to make it easier to reorder factors in a data frame according to the row order. 
+
+## What's the problem?
+
+Something _very_ simple like trying to sort a bar chart can be annoyingly unintuitive, especially to beginners just getting familiar with {ggplot2} and the {tidyverse}. Here's an example:
+
+```{r}
+#| label: bars1
+#| fig.width: 6
+#| fig.height: 4
+
+library(tidyverse)
+
+mpg %>% 
+  count(manufacturer) %>% 
+  ggplot() + 
+  geom_col(aes(x = n, y = manufacturer))
+``` 
+
+This produces an unsorted bar chart. If you wanted to sort the bars based on `n`, many people make the mistake of sorting the _data frame_ and assuming the reordered rows will pass through to the bars, like this:
+
+```{r}
+#| label: bars2
+#| fig.width: 6
+#| fig.height: 4
+
+mpg %>% 
+  count(manufacturer) %>% 
+  arrange(n) %>% 
+  ggplot() + 
+  geom_col(aes(x = n, y = manufacturer))
+```
+
+**But this produces the same chart!** 🤦
+
+To _actually_ get a sorted bar chart, you have to reorder the **factor levels**. There are many ways to do it, but typically I use `reorder()` to change the factor level ordering like this:
+
+```{r}
+#| label: bars-reorder
+#| fig.width: 6
+#| fig.height: 4
+
+mpg %>% 
+  count(manufacturer) %>% 
+  ggplot() + 
+  geom_col(aes(x = n, y = reorder(manufacturer, n)))
+``` 
+
+I find this rather unintuitive and difficult to remember, let alone confusing because the ordering of the rows in the data frame won't match the factor ordering (which is rather opaque to the user).
+
+## Enter {factorlock}
+
+This package provides the `factorlock::lock_factors()` function to "lock" the factor ordering to that of the row ordering in the data frame. Here's the same example but without having to change any ggplot code:
+
+```{r}
+#| label: bars-locked
+#| fig.width: 6
+#| fig.height: 4
+
+mpg %>% 
+  count(manufacturer) %>% 
+  arrange(n) %>% 
+  factorlock::lock_factors() %>% 
+  ggplot() + 
+  geom_col(aes(x = n, y = manufacturer))
+```
+
+The use of `factorlock::lock_factors()` is just an intermediate step that makes it easier to set the factor ordering _before_ making a plot with {ggplot2}. Notice that you also get better axis label names for free here since the `y` variable is still mapped to just `manufacturer` instead of `reorder(manufacturer, n)`.
+
+By default all character or factor type variables are "locked," but you can also specify which variables you want to "lock" while leaving the others alone:
+
+```{r}
+#| label: bars-locked-named
+#| fig.width: 6
+#| fig.height: 4
+
+mpg %>%
+  count(manufacturer) %>% 
+  arrange(n) %>% 
+  factorlock::lock_factors("manufacturer") %>% 
+  ggplot() + 
+  geom_col(aes(x = n, y = manufacturer))
+```
+
+Finally, you can get a reverse factor ordering with `rev = TRUE`:
+
+```{r}
+#| label: bars-locked-rev
+#| fig.width: 6
+#| fig.height: 4
+
+mpg %>%
+  count(manufacturer) %>% 
+  arrange(n) %>% 
+  factorlock::lock_factors(rev = TRUE) %>% 
+  ggplot() + 
+  geom_col(aes(x = n, y = manufacturer))
+```
+
+# Installation
+
+The current version is not yet on CRAN, but you can install it from
+Github using the {remotes} package:
+
+```{r, eval=FALSE}
+# install.packages("remotes")
+remotes::install_github("jhelvy/factorlock")
+```
+
+Load the library with:
+
+```{r}
+library(factorlock)
+```
+
+# Author, Version, and License Information
+
+- Author: *John Paul Helveston* https://www.jhelvy.com/
+- Date First Written: *October 23, 2020*
+- License: [MIT](https://github.com/jhelvy/factorlock/blob/master/LICENSE.md)
+
+# Citation Information
+
+If you use this package for in a publication, I would greatly appreciate it if you cited it - you can get the citation by typing `citation("factorlock")` into R:
+
+```{r}
+citation("factorlock")
+```
