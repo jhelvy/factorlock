@@ -1,0 +1,31 @@
+url: https://jhelvy.github.io/factorlock/
+
+home:
+  title: Set Factors Levels Based on Row Order
+
+template:
+  params:
+    bootswatch: cosmo
+  opengraph:
+    image:
+      src: https://jhelvy.github.io/factorlock/reference/figures/logo.png
+      alt: "Logo for the factorlock package"
+    twitter:
+      creator: "@JohnHelveston"
+      card: summary
+
+navbar:
+  title: "factorlock"
+  left:
+    - icon: fa-home fa-lg
+      href: index.html
+    - text: "Reference"
+      href: reference/index.html
+    - text: "Changelog"
+      href: news/index.html
+
+reference:
+- title: "Lock Factors"
+  desc: "Set Factors Levels Based on Row Order"
+  contents:
+  - lock_factors

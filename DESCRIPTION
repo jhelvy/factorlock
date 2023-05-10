@@ -7,7 +7,7 @@ Authors@R: c(
            role    = c("aut", "cre", "cph"),
            email   = "john.helveston@gmail.com",
            comment = c(ORCID = "0000-0002-2657-9191")))
-Description: Sets the factor levels for some or all factors in a data frame based on their row order in the data frame.
+Description: Set the factor levels for some or all factors in a data frame based on their row order in the data frame.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -19,6 +19,7 @@ Depends:
 Suggests:
     dplyr,
     forecats,
-    gapminder
+    gapminder,
+    ggplot2
 URL: https://github.com/jhelvy/factorlock
 BugReports: https://github.com/jhelvy/factorlock/issues
